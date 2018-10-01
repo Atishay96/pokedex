@@ -53,9 +53,17 @@ typings/
 
 # Yarn Integrity file
 .yarn-integrity
+yarn.lock
+package-lockx.json
 
 # dotenv environment variables file
 .env
 
 # next.js build output
 .next
+
+# extras
+.DSstore
+
+build
+server.js

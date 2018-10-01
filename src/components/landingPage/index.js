@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import pokemonsData from './static/pd.json';
-import ContentLoader from 'react-content-loader'
+// import ContentLoader from 'react-content-loader'
 import './css/lp.css';
 
 class landingPage extends Component {
     constructor(){
         super();
         pokemonsData.map( (v, i) => {
-            pokemonsData[i].index = i;
+            return pokemonsData[i].index = i;
         })
         this.state = {
             pokemons: pokemonsData,
@@ -51,7 +51,7 @@ class landingPage extends Component {
         }
     }
     changePokemon(state) {
-        const { selected, pokemons, searchedText, game } = this.state;
+        const { selected, pokemons, game } = this.state;
         if( game ){
             return;
         }
@@ -80,7 +80,7 @@ class landingPage extends Component {
         if( game ){
             return;
         }
-        let searched = pokemons.filter( (v) => { if (v.name.toLowerCase().includes(text.toLowerCase()) ) return true; })
+        let searched = pokemons.filter( (v) => { if (v.name.toLowerCase().includes(text.toLowerCase()) ) { return true; } else { return false;} })
         this.setState({ searched : searched });
     }
     changePokemonSearch(element) {
@@ -110,7 +110,7 @@ class landingPage extends Component {
         s1 = s1.toLowerCase();
         s2 = s2.toLowerCase();
         
-        var costs = new Array();
+        var costs = [];
         for (var i = 0; i <= s1.length; i++) {
             var lastValue = i;
             for (var j = 0; j <= s2.length; j++) {
@@ -119,7 +119,7 @@ class landingPage extends Component {
             else {
                 if (j > 0) {
                 var newValue = costs[j - 1];
-                if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                if (s1.charAt(i - 1) !== s2.charAt(j - 1))
                     newValue = Math.min(Math.min(newValue, lastValue),
                     costs[j]) + 1;
                 costs[j - 1] = lastValue;
@@ -134,11 +134,15 @@ class landingPage extends Component {
     }
     handleImageLoaded() {
         if (!this.state.loaded) {
-            console.log('image loaded');
+            // console.log('image loaded');
             this.setState({ loaded: true });
         }
     }
-    async playGame(element) {
+    async playGame(element, input) {
+        if( input ){
+            input.value = '';
+            this.setState({searchedText: ''});
+        }
         if(element) {
             if( this.state.game ) {
                 await this.setState({ x: '' })
@@ -156,7 +160,7 @@ class landingPage extends Component {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
     checkAnswer(element) {
-        const { game, selected, searchedText } = this.state;
+        const { selected, searchedText } = this.state;
         let percentage = this.similarity(selected.name.toLowerCase(), searchedText);
         let winningStatus;
         if(percentage > 0.83) {
@@ -167,12 +171,16 @@ class landingPage extends Component {
         this.setState({ hideAnswer: false, winningStatus });
         element.classList.remove("gameImage");
     }
-    async setGame(element) {
+    async setGame(element, input) {
+        if( input ){
+            input.value = '';
+            this.setState({searchedText: ''});
+        }
         await this.setState({ game: false });
         this.playGame(element);
     }
     render() {
-        const { searchedText, selected, searched, loaded, game, hideAnswer, winningStatus } = this.state;
+        const { searchedText, selected, searched, game, hideAnswer, winningStatus } = this.state;
         return (
         <div id="pokedex">
             <div className="sensor">
@@ -189,7 +197,7 @@ class landingPage extends Component {
             <div className="divider"></div>
             <div className="stats-display">
                 <span hidden = { !game }>
-                    <button onClick = { () => this.playGame( document.getElementById('image') ) } className="bottom-modes rightSide">Exit</button>
+                    <button onClick = { () => this.playGame( document.getElementById('image'), document.getElementById('input-pokemon') ) } className="bottom-modes rightSide">Exit</button>
                     <h2>Game Started. Guess the pokemon</h2>
                     <h2>Your Answer: {searchedText}</h2>
                     <br/>
@@ -197,7 +205,7 @@ class landingPage extends Component {
                         <button onClick = { () => this.checkAnswer( document.getElementById('image') ) } className="bottom-modes">Check</button>
                     </span>
                     <span hidden = { hideAnswer }>
-                        <button onClick = { () => this.setGame( document.getElementById('image') ) } className="bottom-modes">Play again</button>
+                        <button onClick = { () => this.setGame( document.getElementById('image'), document.getElementById('input-pokemon') ) } className="bottom-modes">Play again</button>
                     </span>
                     <div hidden = { !winningStatus.length }>
                         <h2>
@@ -215,15 +223,15 @@ class landingPage extends Component {
                     <div>{selected.height}</div>
                     <h3>Abilities</h3>
                     <ul>
-                        { selected.abilities.map(ability => <li> {ability} </li>)}
+                        { selected.abilities.map((ability, index) => <li key={ index }> { ability } </li>)}
                     </ul>
                     <h3>Type</h3>
                     <ul>
-                    { selected.type.map(type => <li> {type} </li>)}
+                    { selected.type.map((type, index) => <li key={ index }> {type} </li>)}
                     </ul>
                     <h3>Weakness</h3>
                     <ul>
-                    { selected.weakness.map(weakness => <li> {weakness} </li>)}
+                    { selected.weakness.map((weakness, index) => <li key={ index }> {weakness} </li>)}
                     </ul>
                 </span>
                 <span  hidden = {searchedText.length < 3  || game }>
@@ -236,7 +244,7 @@ class landingPage extends Component {
             </div>
             <div className="botom-actions">
                 <div id="actions">
-                    <button onClick= { () => this.playGame(document.getElementById('image')) } className="a"></button>
+                    <button onClick= { () => this.playGame(document.getElementById('image'), document.getElementById('input-pokemon')) } className="a"></button>
                 </div>
                 <div id="cross">
                     <button onClick= { () => this.changePokemon('prev') } className="cross-button up"></button>
@@ -246,7 +254,7 @@ class landingPage extends Component {
                     <div className="cross-button center"> </div>
                 </div>
             </div>
-            <div onChange = { (e) => this.searchPokemon(e.target.value) } className="input-pad"><input placeholder = "Enter Pokemon Name" /></div>
+            <div onChange = { (e) => this.searchPokemon(e.target.value) } className="input-pad"><input id="input-pokemon" placeholder = "Enter Pokemon Name" /></div>
             {/* <div className="bottom-modes">
                 <button className="level-button"></button>
                 <button className="level-button"></button>
