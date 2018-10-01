@@ -3,7 +3,7 @@ pokedex
 
 Description
 ==
-Pokedex is database for pokemons. [DEMO](https://safe-lowlands-78084.herokuapp.com/)
+Pokedex is database for pokemons. [DEMO](http://35.154.184.170:4040/)
 
 Installation
 ==
