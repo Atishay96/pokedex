@@ -12,7 +12,7 @@
     "react-dom": "^16.4.2",
     "react-redux": "^5.0.7",
     "react-router": "3.2.0",
-    "react-scripts": "1.1.4",
+    "react-scripts": "^2.1.1",
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0"
   },
@@ -23,5 +23,11 @@
     "eject": "react-scripts eject",
     "server": "nodemon server.js"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
